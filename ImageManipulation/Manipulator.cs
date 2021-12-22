@@ -16,7 +16,7 @@ namespace ImageManipulation
 
         public Manipulator()
         {
-
+            // default constructor
         }
 
         /// <summary>
