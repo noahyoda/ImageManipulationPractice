@@ -163,6 +163,60 @@ namespace ImageManipulation
             return blurred;
         }
 
+        public Image GaussianWeightedFilter(Image img, double[,] kernel)
+        {
+            Bitmap blurred = (Bitmap)img;
+            // iterate over coloumns
+            for (int x = 0; x < blurred.Width; x++)
+            {
+                // iterate over rows
+                for (int y = 0; y < blurred.Height; y++)
+                {
+                    int sX = x - (kernel.GetLength(0) / 2);
+                    int sY = y - (kernel.GetLength(1) / 2);
+                    // pass in top left, not center
+                    blurred.SetPixel(x, y, kernalWeightedAvg(kernel, sX, sY, blurred));     // curr pixel = convolutional average of kernel
+                }
+            }
+
+            return blurred;
+        }
+
+        private static Color kernalWeightedAvg(double[,] kernel, int x, int y, Bitmap img)
+        {
+            double r = 0;
+            double g = 0;
+            double b = 0;
+            double tSize = 0;
+            //start with col
+            for(int i = 0; i < kernel.GetLength(1); i++)
+            {
+                // then row
+                for(int k = 0; k < kernel.GetLength(0); k++)
+                {
+                    int getX = x + i;
+                    int getY = y + k;
+                    // skip pixels out of bound
+                    if (getX < 0 || getY < 0 || getX >= img.Width || getY >= img.Height)
+                    {
+                        continue;
+                    }
+
+                    // get pixel color
+                    Color curr = img.GetPixel(getX, getY);
+
+                    // calc weight
+                    double weight = kernel[k, i];
+                    r += curr.R * weight;
+                    g += curr.G * weight;
+                    b += curr.B * weight;
+                    tSize += weight;
+                }
+            }
+            //tSize -= 5;
+            return Color.FromArgb((int)(r/tSize), (int)(g/tSize), (int)(b/tSize));
+        }
+
         /// <summary>
         /// gets the kernel average at a coordinate given an image
         /// and the kernel width/heigh (square only)

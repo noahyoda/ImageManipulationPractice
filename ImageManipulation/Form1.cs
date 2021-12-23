@@ -64,7 +64,17 @@ namespace ImageManipulation
         {
             blurStatus.Text = "starting blur...";
             blurStatus.Update();
-            content.Primary = m.GaussianFilter(content.Primary, 5);
+            //content.Primary = m.GaussianFilter(content.Primary, 5);
+            double[,] f1 = new double[5,5] { 
+                { 0.1, 0.25, 0.5, 0.25, 0.1 }, 
+                {0.25,0.5,0.85,0.5,0.25},
+                {0.5,0.85,1,0.85,0.5}, 
+                {0.25,0.5,0.85,0.5,0.25}, 
+                { 0.1, 0.25, 0.5, 0.25, 0.1 }
+            };
+
+            content.Primary = m.GaussianWeightedFilter(content.Primary, f1);
+
             blurStatus.Text = "blur complete!";
             UpdateFrame();
         }
